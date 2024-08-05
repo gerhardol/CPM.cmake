@@ -129,9 +129,10 @@ option(CPM_USE_NAMED_CACHE_DIRECTORIES
        "Use additional directory of package name in cache on the most nested level."
        $ENV{CPM_USE_NAMED_CACHE_DIRECTORIES}
 )
-option(CPM_CHECK_CACHE_CHECKSUM
-       "If a package is stored in cache and there is a command to provide checksum, check the checksum when the cache dir exists."
-       $ENV{CPM_CHECK_CACHE_CHECKSUM}
+option(
+  CPM_CHECK_CACHE_CHECKSUM
+  "If a package is stored in cache and there is a command to provide checksum, check the checksum when the cache dir exists."
+  $ENV{CPM_CHECK_CACHE_CHECKSUM}
 )
 
 set(CPM_VERSION
@@ -797,15 +798,18 @@ function(CPMAddPackage)
     file(LOCK ${download_directory}/../cmake.lock)
 
     if(EXISTS ${download_directory} AND NOT EXISTS ${download_directory}.download)
-      message(WARNING "Cache for ${CPM_ARGS_NAME} is missing .download, downloading. (${download_directory}.download)")
+      message(
+        WARNING
+          "Cache for ${CPM_ARGS_NAME} is missing .download, downloading. (${download_directory}.download)"
+      )
       file(REMOVE_RECURSE ${download_directory})
     endif()
 
     if(EXISTS ${download_directory}
-      AND CPM_ARGS_CUSTOM_CACHE_CHECKSUM_COMMAND
-      AND (CPM_CHECK_CACHE_CHECKSUM
-        OR DEFINED CPM_ARGS_CUSTOM_CACHE_CHECKSUM_VALUE))
-      if (CPM_ARGS_CUSTOM_CACHE_CHECKSUM_VALUE)
+       AND CPM_ARGS_CUSTOM_CACHE_CHECKSUM_COMMAND
+       AND (CPM_CHECK_CACHE_CHECKSUM OR DEFINED CPM_ARGS_CUSTOM_CACHE_CHECKSUM_VALUE)
+    )
+      if(CPM_ARGS_CUSTOM_CACHE_CHECKSUM_VALUE)
         # Explicit checksum provided, ignore value in .downloaded
         set(expected_checksum ${CPM_ARGS_CUSTOM_CACHE_CHECKSUM_VALUE})
       else()
@@ -818,8 +822,7 @@ function(CPMAddPackage)
           COMMAND ${CPM_ARGS_CUSTOM_CACHE_CHECKSUM_COMMAND}
           WORKING_DIRECTORY ${download_directory}
           OUTPUT_VARIABLE checksum
-          OUTPUT_STRIP_TRAILING_WHITESPACE
-          COMMAND_ERROR_IS_FATAL ANY
+          OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ERROR_IS_FATAL ANY
         )
         if(NOT expected_checksum STREQUAL checksum)
           message(
@@ -837,14 +840,13 @@ function(CPMAddPackage)
     endif()
 
     if(EXISTS ${download_directory}
-      AND DEFINED CPM_ARGS_GIT_TAG
-       AND NOT (PATCH_COMMAND IN_LIST CPM_ARGS_UNPARSED_ARGUMENTS))
+       AND DEFINED CPM_ARGS_GIT_TAG
+       AND NOT (PATCH_COMMAND IN_LIST CPM_ARGS_UNPARSED_ARGUMENTS)
+    )
       # warn if cache has been changed since checkout
       cpm_check_git_working_dir_is_clean(${download_directory} ${CPM_ARGS_GIT_TAG} IS_CLEAN)
       if(NOT ${IS_CLEAN})
-        message(
-          WARNING "${CPM_INDENT} Cache for ${CPM_ARGS_NAME} (${download_directory}) is dirty"
-        )
+        message(WARNING "${CPM_INDENT} Cache for ${CPM_ARGS_NAME} (${download_directory}) is dirty")
         if(CPM_CHECK_CACHE_CHECKSUM OR DEFINED CPM_ARGS_CUSTOM_CACHE_CHECKSUM_VALUE)
           file(REMOVE_RECURSE ${download_directory})
         endif()
@@ -947,10 +949,11 @@ function(CPMAddPackage)
             COMMAND ${CPM_ARGS_CUSTOM_CACHE_CHECKSUM_COMMAND}
             WORKING_DIRECTORY ${download_directory}
             OUTPUT_VARIABLE checksum
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            COMMAND_ERROR_IS_FATAL ANY
+            OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ERROR_IS_FATAL ANY
           )
-          if(CPM_ARGS_CUSTOM_CACHE_CHECKSUM_VALUE AND NOT CPM_ARGS_CUSTOM_CACHE_CHECKSUM_VALUE STREQUAL checksum)
+          if(CPM_ARGS_CUSTOM_CACHE_CHECKSUM_VALUE AND NOT CPM_ARGS_CUSTOM_CACHE_CHECKSUM_VALUE
+                                                      STREQUAL checksum
+          )
             message(
               FATAL_ERROR
                 "Checksum mismatch for ${CPM_ARGS_NAME} (${CPM_ARGS_CUSTOM_CACHE_CHECKSUM_VALUE} != ${checksum})"

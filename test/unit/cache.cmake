@@ -160,7 +160,9 @@ reset_test()
 set(FIBONACCI_VERSION 1.1)
 set(FIBONACCI_GIT_TAG "GIT_TAG e9ebf168ca0fffaa4ef8c6fefc6346aaa22f6ed5")
 set(TEST_CHECKSUM_DIR "${CPM_SOURCE_CACHE_DIR}/fibonacci/my_checksummed_dir")
-set(TEST_CHECKSUM_VALUE d2e7c040116d3f4f153eee84cb884fd5008a31b480b739bf86d3872d978cfaa74d82e07581a1861fdb07e717be5b658eb520e2f4e29fbf0ce248bfef478c1971)
+set(TEST_CHECKSUM_VALUE
+    d2e7c040116d3f4f153eee84cb884fd5008a31b480b739bf86d3872d978cfaa74d82e07581a1861fdb07e717be5b658eb520e2f4e29fbf0ce248bfef478c1971
+)
 
 # OK download
 
@@ -226,8 +228,8 @@ execute_process(
 
 assert_equal(${ret} "0")
 
-# check checksum for download, provided incorrect
-# This will print a fatal_error (red) error to the console
+# check checksum for download, provided incorrect This will print a fatal_error (red) error to the
+# console
 
 set(FIBONACCI_PACKAGE_ARGS
     "${FIBONACCI_GIT_TAG} CUSTOM_CACHE_KEY my_checksummed_dir CUSTOM_CACHE_CHECKSUM_COMMAND ${CMAKE_CURRENT_LIST_DIR}/checksum_directory.sh CUSTOM_CACHE_CHECKSUM_VALUE invalid_checksum_value"
@@ -276,4 +278,3 @@ execute_process(
 
 assert_equal(${ret} "0")
 assert_not_exists("${TEST_CHECKSUM_DIR}/fail_checksum.txt")
-
